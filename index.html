@@ -1,9 +1,13 @@
 <html> 
     <head>
+        <title>Red pill or Blue pill?</title>
         <style>
             * {
                 margin: 0;
                 padding: 0;
+                width:  100%;
+                height: 100%;
+                overflow: hidden;
             }
             body {background: black;}
             canvas {display: block;}
@@ -12,58 +16,68 @@
     <body>
         <canvas id="c"></canvas>
         <script>
-            // geting canvas
-            var c = document.getElementById("c");
-            var ctx = c.getContext("2d");
-
-            //making the canvas full screen
-            c.height = window.innerHeight;
-            c.width = window.innerWidth;
-
-            //chinese characters - taken from the unicode charset
-            //var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-            var matrix = "田由甲申甴电甶男甸甹町画甼甽甾甿畀畁畂畃畄畅畆畇畈畉畊畋界畍畎畏畐畑";
-            //converting the string into an array of single characters
-            matrix = matrix.split("");
-
-            var font_size = 10;
-            var columns = c.width/font_size; //number of columns for the rain
-            //an array of drops - one per column
-            var drops = [];
-            //x below is the x coordinate
-            //1 = y co-ordinate of the drop(same for every drop initially)
-            for(var x = 0; x < columns; x++)
-                drops[x] = 1; 
-
-            //drawing the characters
-            function draw()
-            {
-                //Black BG for the canvas
-                //translucent BG to show trail
-                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-                ctx.fillRect(0, 0, c.width, c.height);
-
-                ctx.fillStyle = "#0F0"; //green text; red text - #f4427d
-                ctx.font = font_size + "px arial";
-                //looping over drops
-                for(var i = 0; i < drops.length; i++)
-                {
-                    //a random chinese character to print
-                    var text = matrix[Math.floor(Math.random()*matrix.length)];
-                    //x = i*font_size, y = value of drops[i]*font_size
-                    ctx.fillText(text, i*font_size, drops[i]*font_size);
-
-                    //sending the drop back to the top randomly after it has crossed the screen
-                    //adding a randomness to the reset to make the drops scattered on the Y axis
-                    if(drops[i]*font_size > c.height && Math.random() > 0.975)
-                        drops[i] = 0;
-
-                    //incrementing Y coordinate
-                    drops[i]++;
+            (function() {
+                function initialize() {
+                    // Register an event listener to call the resizeCanvas() function each time the window is resized.
+                    window.addEventListener('resize', resizeCanvas, false);
+                    // Draw canvas border for the first time.
+                    resizeCanvas();
                 }
-            }
-            setInterval(draw, 33);
+
+                // geting canvas
+                var c = document.getElementById("c");
+                var ctx = c.getContext("2d");
+
+                // chinese characters - taken from the unicode charset
+                // var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+                var matrix = "田由甲申甴电甶男甸甹町画甼甽甾甿畀畁畂畃畄畅畆畇畈畉畊畋界畍畎畏畐畑";
+                // converting the string into an array of single characters
+                matrix = matrix.split("");
+
+                var font_size = 10;
+                // an array of drops - one per column
+                var drops = [];
+
+                function resizeCanvas() {
+                    // making the canvas full screen
+                    c.height = window.innerHeight;
+                    c.width = window.innerWidth;
+                    // number of columns for the rain
+                    var columns = c.width / font_size;
+                    // x below is the x coordinate
+                    // 1 = y co-ordinate of the drop(same for every drop initially)
+                    for (var x = 0; x < columns; x++)
+                        drops[x] = 1;
+                }
+
+                // randomly green or red text
+                var textColor = Math.random() > 0.5 ? "#0F0" : "#f4427d";
+
+                // drawing the characters
+                function draw() {
+                    // Black BG for the canvas; translucent BG to show trail
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                    ctx.fillRect(0, 0, c.width, c.height);
+                    ctx.fillStyle = textColor;
+                    ctx.font = font_size + "px arial";
+                    // looping over drops
+                    for (var i = 0; i < drops.length; i++) {
+                        // a random chinese character to print
+                        var text = matrix[Math.floor(Math.random() * matrix.length)];
+                        // x = i*font_size, y = value of drops[i]*font_size
+                        ctx.fillText(text, i*font_size, drops[i]*font_size);
+                        // sending the drop back to the top randomly after it has crossed the screen
+                        // adding a randomness to the reset to make the drops scattered on the Y axis
+                        if (drops[i] * font_size > c.height && Math.random() > 0.975)
+                            drops[i] = 0;
+                        // incrementing Y coordinate
+                        drops[i]++;
+                    }
+                }
+                // Start listening to resize events and draw canvas
+                initialize();
+                setInterval(draw, 33);
+            })();
         </script>
     </body>
 </html>
-
